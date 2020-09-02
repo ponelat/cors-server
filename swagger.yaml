@@ -1,0 +1,124 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  description: |
+    A simple CORS server for testing. Where via query flags you can control the Access-Control-X-X headers.
+  title: CORS Server
+
+servers:
+- url: /
+  description: Hosted
+- url: https://cors.ponelat.com
+  description: Hosted
+- url: http://localhost:3001
+  description: Local express server
+paths:
+  /cookie:
+    get:
+      description: Returns a cookie
+      parameters:
+        - name: value
+          in: query
+          description: Value to set in cookie
+          required: false
+          default: bob
+          schema:
+            type: string
+        - name: cookie
+          in: query
+          description: Name of cookie
+          required: false
+          default: cors-server
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sets a cookie
+        headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: cors-test=bob; Path=/
+
+  /query:
+    post:
+      description: ok
+      parameters:
+      - name: allow-origin
+        in: query
+        description: |
+          Special keywords include...
+
+          | Keyword   | Description                         |
+          |-----------|------------------------------------ |
+          | **$echo** | echos the Origin header             |
+          | ___*___   | The literal `*` used as a wildcard  |
+
+        example: example.com
+        schema:
+          type: string
+      - name: allow-headers
+        in: query
+        description: |
+          Special keywords include...
+
+          | Keyword   | Description                                                                                    |
+          |-----------|------------------------------------------------------------------------------------------------|
+          | **$echo** **| echos the headers found in `Access-Control-Request-Headers` OR all the headers in the request. |
+          | __*__     | The literal `*` used as a wildcard                                                             |
+        example: 'content-type, origin'
+        schema:
+          type: string
+      - name: allow-method
+        in: query
+        description: |
+          Special keywords include...
+
+          | Keyword   | Description                                                                       |
+          |-----------|-----------------------------------------------------------------------------------|
+          | **$echo** | echos either `Access-Control-Request-Method` or the _METHOD_ used in the request. |
+          | **$all**  | All the common methods: `GET,POST,PUT,DELETE,OPTIONS,PATCH,TRACE`                 |
+          | __*__     | The literal `*` used as a wildcard                                                |
+
+        example: content-type, origin
+        schema:
+          type: string
+      - name: allow-credentials
+        in: query
+        schema:
+          type: boolean
+          default: false
+      responses:
+        default:
+          description: Echos the response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  body:
+                    type: object
+                    description: The body in the request
+                  headers:
+                    type: object
+                    description: The headers in the request
+                  query:
+                    type: object
+                    description: The query parameters in the request
+                  accessControl:
+                    type: object
+                    description: The Access-Control-XX-XX headers that are set in the response
+                    properties:
+                      access-control-allow-origin:
+                        type: string
+                      access-control-allow-headers:
+                        type: string
+                      access-control-allow-method:
+                        type: string
+                      access-control-allow-credentials:
+                        type: string
+                      access-control-max-age:
+                        type: number
+                        default: 1
+                        example: 1
+                        minLength: 0

@@ -35,6 +35,8 @@
     ]
   },
   "devDependencies": {
-    "npm-run-all": "^4.1.5"
+    "nodemon": "^2.0.4",
+    "npm-run-all": "^4.1.5",
+    "swagger-ui-react": "^3.32.5"
   }
 }
